@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.VisibleForTesting
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -76,7 +77,10 @@ class LoginViewModel @Inject constructor(
                             }
                             LoginStatus.CouldNotFinishLoginAttempt -> {
                                 Timber.d("Login could not finish")
-
+                                val message = UiText.StringResource(
+                                    string.login_screen_generic_error
+                                )
+                                showResponseError(error = message)
                             }
                             LoginStatus.EmptyPassword -> {
                                 Timber.d("Login response is EmptyPassword")
@@ -166,7 +170,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun showUserNameAndPasswordError() {
+    fun showUserNameAndPasswordError() {
         mutableState.update {
             it.copy(
                 userNameError = UiText.StringResource(string.login_screen_validation_username_empty),

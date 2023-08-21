@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.baubaptechchallenge.R.string
+import com.example.baubaptechchallenge.presentation.login.DIALOG_TEST_TAG
 import com.example.baubaptechchallenge.presentation.theme.dimens
 import com.example.baubaptechchallenge.presentation.theme.md_theme_light_onPrimaryContainer
 
@@ -51,7 +53,8 @@ fun CustomDialogUI(
         //shape = MaterialTheme.shapes.medium,
         shape = RoundedCornerShape(10.dp),
         // modifier = modifier.size(280.dp, 240.dp)
-        modifier = Modifier.padding(10.dp, 5.dp, 10.dp, 10.dp),
+        modifier = Modifier.padding(10.dp, 5.dp, 10.dp, 10.dp)
+            .testTag(DIALOG_TEST_TAG),
         elevation = CardDefaults.cardElevation(
             defaultElevation = MaterialTheme.dimens.normal
         ),

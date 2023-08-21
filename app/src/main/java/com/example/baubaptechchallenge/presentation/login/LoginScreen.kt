@@ -36,6 +36,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -50,8 +51,15 @@ import com.example.baubaptechchallenge.presentation.login.validation.LoginEvent
 import com.example.baubaptechchallenge.presentation.login.validation.LoginValidationEvent
 import com.example.baubaptechchallenge.presentation.theme.dimens
 import com.example.baubaptechchallenge.presentation.util.UiText
-import kotlinx.coroutines.flow.collect
 import timber.log.Timber
+
+const val CONTAINER_TEST_TAG = "login_screen_container"
+const val USERNAME_FIELD_TEST_TAG = "username_input"
+const val PASSWORD_FIELD_TEST_TAG = "password_input"
+const val USERNAME_ERROR_TEST_TAG = "username_error_label"
+const val PASSWORD_ERROR_TEST_TAG = "password_error_label"
+const val LOGIN_BUTTON_TEST_TAG = "login_screen_button"
+const val DIALOG_TEST_TAG = "login_screen_dialog"
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -73,7 +81,8 @@ fun LoginScreen (
         Column(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .testTag(CONTAINER_TEST_TAG),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -125,7 +134,8 @@ fun LoginScreen (
             }
 
             LoginTextField(
-                modifier = Modifier.fillMaxWidth(columnContentWidth),
+                modifier = Modifier.fillMaxWidth(columnContentWidth)
+                    .testTag(USERNAME_FIELD_TEST_TAG),
                 value = state.userName,
                 label = stringResource(id = string.login_screen_username_hint),
                 showError = showUserError,
@@ -136,7 +146,8 @@ fun LoginScreen (
 
             state.userNameError?.let { error ->
                 LoginErrorLabel(
-                    modifier = Modifier.fillMaxWidth(columnContentWidth),
+                    modifier = Modifier.fillMaxWidth(columnContentWidth)
+                        .testTag(USERNAME_ERROR_TEST_TAG),
                     error.asString()
                 )
             }
@@ -149,7 +160,8 @@ fun LoginScreen (
                 modifier = Modifier
                     .fillMaxWidth(columnContentWidth)
                     .focusRequester(passwordFocus)
-                    .focusProperties { right = togglePasswordFocus },
+                    .focusProperties { right = togglePasswordFocus }
+                    .testTag(PASSWORD_FIELD_TEST_TAG),
                 value = state.password,
                 label = stringResource(id = string.login_screen_password_hint),
                 showError = showPasswordError,
@@ -174,7 +186,8 @@ fun LoginScreen (
 
             state.passwordError?.let { error ->
                 LoginErrorLabel(
-                    modifier = Modifier.fillMaxWidth(columnContentWidth),
+                    modifier = Modifier.fillMaxWidth(columnContentWidth)
+                        .testTag(PASSWORD_ERROR_TEST_TAG),
                     error.asString()
                 )
             }
@@ -184,7 +197,8 @@ fun LoginScreen (
             PrimaryButton(
                 text = stringResource(string.login),
                 modifier = Modifier
-                    .fillMaxWidth(columnContentWidth),
+                    .fillMaxWidth(columnContentWidth)
+                    .testTag(LOGIN_BUTTON_TEST_TAG),
                 onClick = {
                     localFocusManager.clearFocus()
                     loginViewModel.onEvent(LoginEvent.Submit)

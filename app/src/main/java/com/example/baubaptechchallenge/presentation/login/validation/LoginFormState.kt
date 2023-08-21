@@ -8,7 +8,5 @@ data class LoginFormState(
     val userNameError: UiText? = null,
     val passwordError: UiText? = null,
     val responseError: UiText? = null,
-    val showLoading: Boolean = false,
-    val isSuccess: Boolean = false,
-    val isError: Boolean = false
+    val showLoading: Boolean = false
 )
