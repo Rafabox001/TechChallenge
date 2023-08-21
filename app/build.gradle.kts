@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.baubaptechchallenge"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.baubaptechchallenge"
@@ -58,6 +58,8 @@ dependencies {
     //Core
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.datastore:datastore-preferences:1.1.0-alpha04")
+
     //Compose
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
@@ -67,6 +69,7 @@ dependencies {
 
     //Material
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended-android:1.5.0")
 
     //Hilt
     implementation("com.google.dagger:hilt-android:2.46.1")

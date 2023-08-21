@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">BaubapTechChallenge</string>
+    <string name="login">Login</string>
+
+    <!-- Login Screen Validations -->
+    <string name="login_screen_username_hint">Username</string>
+    <string name="login_screen_password_hint">Password</string>
+    <string name="login_screen_success_message">Welcome, logged in successfully!</string>
+    <string name="login_screen_failure_message">Oops!, credentials did not match…</string>
+    <string name="login_screen_success_dialog_close">Close</string>
+
+
+    <!-- Login Screen Validations -->
+    <string name="login_screen_validation_password_empty">A Password is required</string>
+    <string name="login_screen_validation_username_empty">An email or username is required</string>
+    <string name="login_screen_validation_password_wrong_format">Password must be at least %s characters long</string>
+    <string name="login_screen_generic_error">Something went wrong, please try again!</string>
+
 </resources>
