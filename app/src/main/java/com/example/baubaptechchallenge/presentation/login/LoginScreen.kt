@@ -22,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,7 +36,6 @@ import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -48,6 +48,7 @@ import com.example.baubaptechchallenge.presentation.login.components.LoginErrorL
 import com.example.baubaptechchallenge.presentation.login.components.LoginTextField
 import com.example.baubaptechchallenge.presentation.login.components.PrimaryButton
 import com.example.baubaptechchallenge.presentation.login.validation.LoginEvent
+import com.example.baubaptechchallenge.presentation.login.validation.LoginFormState
 import com.example.baubaptechchallenge.presentation.login.validation.LoginValidationEvent
 import com.example.baubaptechchallenge.presentation.theme.dimens
 import com.example.baubaptechchallenge.presentation.util.UiText
@@ -61,10 +62,51 @@ const val PASSWORD_ERROR_TEST_TAG = "password_error_label"
 const val LOGIN_BUTTON_TEST_TAG = "login_screen_button"
 const val DIALOG_TEST_TAG = "login_screen_dialog"
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LoginScreen (
     loginViewModel: LoginViewModel
+) {
+    val isSuccessDialogShown = remember {
+        mutableStateOf(false)
+    }
+    val isFailureDialogShown = remember {
+        mutableStateOf(false)
+    }
+
+    val state by loginViewModel.state.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = context) {
+        loginViewModel.validationEvents.collect { event ->
+            when (event) {
+                is LoginValidationEvent.Success -> {
+                    Timber.d("Show successful login Dialog")
+                    isSuccessDialogShown.value = true
+                }
+                is LoginValidationEvent.Failure -> {
+                    Timber.d("Show failure login Dialog")
+                    isFailureDialogShown.value = true
+                }
+            }
+        }
+    }
+
+    LoginScreenComponent(
+        state = state,
+        isSuccessDialogShown = isSuccessDialogShown,
+        isFailureDialogShown = isFailureDialogShown
+    ) { event ->
+        loginViewModel.onEvent(event)
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun LoginScreenComponent (
+    state: LoginFormState,
+    isSuccessDialogShown: MutableState<Boolean>,
+    isFailureDialogShown: MutableState<Boolean>,
+    onEvent: (LoginEvent) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -86,38 +128,12 @@ fun LoginScreen (
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val isSuccessDialogShown = remember {
-                mutableStateOf(false)
-            }
-            val isFailureDialogShown = remember {
-                mutableStateOf(false)
-            }
-
-            val state by loginViewModel.state.collectAsState()
-            val context = LocalContext.current
-
-            LaunchedEffect(key1 = context) {
-                loginViewModel.validationEvents.collect { event ->
-                    when (event) {
-                        is LoginValidationEvent.Success -> {
-                            Timber.d("Show successful login Dialog")
-                            isSuccessDialogShown.value = true
-                        }
-                        is LoginValidationEvent.Failure -> {
-                            Timber.d("Show failure login Dialog")
-                            isFailureDialogShown.value = true
-                        }
-                    }
-                }
-            }
-
             val (passwordFocus, togglePasswordFocus) = remember { FocusRequester.createRefs() }
 
             var showPassword by remember {
                 mutableStateOf(false)
             }
             val localFocusManager = LocalFocusManager.current
-            val keyboardController = LocalSoftwareKeyboardController.current
 
             val columnContentWidth = .7f
 
@@ -134,19 +150,21 @@ fun LoginScreen (
             }
 
             LoginTextField(
-                modifier = Modifier.fillMaxWidth(columnContentWidth)
+                modifier = Modifier
+                    .fillMaxWidth(columnContentWidth)
                     .testTag(USERNAME_FIELD_TEST_TAG),
                 value = state.userName,
                 label = stringResource(id = string.login_screen_username_hint),
                 showError = showUserError,
                 trailingIcon = {
                 },
-                onValueChange = { loginViewModel.onEvent(LoginEvent.UserNameChanged(it)) }
+                onValueChange = { onEvent(LoginEvent.UserNameChanged(it)) }
             )
 
             state.userNameError?.let { error ->
                 LoginErrorLabel(
-                    modifier = Modifier.fillMaxWidth(columnContentWidth)
+                    modifier = Modifier
+                        .fillMaxWidth(columnContentWidth)
                         .testTag(USERNAME_ERROR_TEST_TAG),
                     error.asString()
                 )
@@ -181,12 +199,13 @@ fun LoginScreen (
                         )
                     }
                 },
-                onValueChange = { loginViewModel.onEvent(LoginEvent.PasswordChanged(it)) }
+                onValueChange = { onEvent(LoginEvent.PasswordChanged(it)) }
             )
 
             state.passwordError?.let { error ->
                 LoginErrorLabel(
-                    modifier = Modifier.fillMaxWidth(columnContentWidth)
+                    modifier = Modifier
+                        .fillMaxWidth(columnContentWidth)
                         .testTag(PASSWORD_ERROR_TEST_TAG),
                     error.asString()
                 )
@@ -201,7 +220,7 @@ fun LoginScreen (
                     .testTag(LOGIN_BUTTON_TEST_TAG),
                 onClick = {
                     localFocusManager.clearFocus()
-                    loginViewModel.onEvent(LoginEvent.Submit)
+                    onEvent(LoginEvent.Submit)
                 },
             )
 

@@ -170,7 +170,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun showUserNameAndPasswordError() {
+    private fun showUserNameAndPasswordError() {
         mutableState.update {
             it.copy(
                 userNameError = UiText.StringResource(string.login_screen_validation_username_empty),
